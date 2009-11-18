@@ -3,10 +3,6 @@ package allwolf;
 import java.util.Observable;
 import java.util.Observer;
 
-/**
- * 
- * @author jeff
- */
 public class Game implements Observer
 {
 	private Board board;

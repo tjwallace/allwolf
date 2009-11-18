@@ -1,15 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package allwolf;
 
-/**
- * 
- * @author jeff
- */
-abstract public class Unit
+abstract public class Unit extends Thread
 {
-
+	private int posX;
+	private int posY;
 }
