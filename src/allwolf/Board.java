@@ -34,22 +34,18 @@ public class Board extends Observable
 		return isRunning;
 	}
 	
-	/**
-	 * Generate some wolves and place them randomly on the map
-	 * @param count The number of wolves to generate
-	 */
-	public void generateWolfs(int count)
+	public void addUnit(Unit unit) throws Exception
 	{
+		int x = unit.getPosX(), y = unit.getPosY();
 		
-	}
-	
-	/**
-	 * Generate some sheep and place them randomly on the map
-	 * @param count The number of sheep to generate
-	 */
-	public void generateSheep(int count)
-	{
+		if (x < 0 || x >= sizeX)
+			throw new Exception("Unit's X position is off the map ("+x+")");
 		
+		if (y < 0 || y >= sizeY)
+			throw new Exception("Unit's Y position is off the map ("+y+")");
+		
+		unit.setBoard(this);
+		map[x][y] = unit;
 	}
 	
 	public void run()
