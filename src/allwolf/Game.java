@@ -20,7 +20,7 @@ public class Game implements Observer
 
 	public void update(Observable o, Object arg)
 	{
-		throw new UnsupportedOperationException("Not supported yet.");
+		System.out.println("Game recieved "+arg+" update from "+o);
 	}
 
 }

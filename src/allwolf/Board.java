@@ -34,18 +34,58 @@ public class Board extends Observable
 		return isRunning;
 	}
 	
-	public void addUnit(Unit unit) throws Exception
+	public boolean isValidPos(int x, int y)
 	{
-		int x = unit.getPosX(), y = unit.getPosY();
-		
 		if (x < 0 || x >= sizeX)
-			throw new Exception("Unit's X position is off the map ("+x+")");
+			return false;
 		
 		if (y < 0 || y >= sizeY)
-			throw new Exception("Unit's Y position is off the map ("+y+")");
+			return false;
+		
+		return true;
+	}
+	
+	public Unit getUnit(int x, int y)
+	{
+		if (!isValidPos(x, y))
+			return null;
+		
+		return map[x][y];
+	}
+	
+	public void addUnit(Unit unit) throws Exception
+	{
+		int x = unit.getXPos(), y = unit.getYPos();
+		
+		if (!isValidPos(x, y))
+			throw new Exception("Unit's position ("+x+","+y+") is off the map ("+sizeX+","+sizeY+")");
 		
 		unit.setBoard(this);
 		map[x][y] = unit;
+		
+		notifyObservers();
+	}
+	
+	public synchronized void moveUnit(Unit unit, Point next)
+	{
+		moveUnit(unit, next.x, next.y);
+	}
+	
+	public synchronized void moveUnit(Unit unit, int xDest, int yDest)
+	{
+		int xSrc = unit.getXPos();
+		int ySrc = unit.getYPos();
+		
+		if (!isValidPos(xSrc, ySrc) || !isValidPos(xDest, yDest))
+			return;
+		
+		Unit temp = getUnit(xSrc, ySrc);
+		map[xSrc][ySrc] = null;
+		map[xDest][yDest] = temp;
+		temp.setXPos(xDest);
+		temp.setYPos(yDest);
+		
+		notifyObservers();
 	}
 	
 	public void run()
@@ -63,5 +103,11 @@ public class Board extends Observable
 		}
 		
 		isRunning = true;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "Board ("+sizeX+","+sizeY+")";
 	}
 }
