@@ -1,6 +1,6 @@
 package allwolf;
 
-public final class Point
+public final class Point implements Comparable<Point>
 {
 	public final int x;
 	public final int y;
@@ -72,5 +72,17 @@ public final class Point
 		else
 			return false;
 		
+	}
+
+	@Override
+	public int compareTo(Point o)
+	{
+		if (equals(o))
+			return 0;
+		
+		if (y == o.y)
+			return (x > o.x) ? 1 : -1;
+		else
+			return (y > o.y) ? 1 : -1;			
 	}
 }

@@ -2,8 +2,8 @@ package allwolf.agent;
 
 import java.util.ArrayList;
 
-import allwolf.Board;
 import allwolf.Point;
+import allwolf.board.Board;
 
 abstract public class Agent extends Thread
 {

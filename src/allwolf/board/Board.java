@@ -1,7 +1,9 @@
-package allwolf;
+package allwolf.board;
 
 import java.util.Observable;
 
+import allwolf.MoveException;
+import allwolf.Point;
 import allwolf.agent.Agent;
 
 public abstract class Board extends Observable

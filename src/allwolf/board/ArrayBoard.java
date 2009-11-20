@@ -1,5 +1,7 @@
-package allwolf;
+package allwolf.board;
 
+import allwolf.MoveException;
+import allwolf.Point;
 import allwolf.agent.Agent;
 
 public class ArrayBoard extends Board
@@ -41,15 +43,14 @@ public class ArrayBoard extends Board
 		Point src = agent.getPos();
 		
 		if (!isValidPos(src))
-			throw new MoveException(agent, dest);
+			throw new MoveException(agent, src);
 		
 		if (!isValidPos(dest))
 			throw new MoveException(agent, dest);
 		
-		Agent temp = getAgent(src);
 		map[src.x][src.y] = null;
-		map[dest.x][dest.y] = temp;
-		temp.setPos(dest);
+		map[dest.x][dest.y] = agent;
+		agent.setPos(dest);
 		
 		notifyObservers();
 	}
