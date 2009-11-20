@@ -2,12 +2,14 @@ package allwolf;
 
 import java.util.Observable;
 
+import allwolf.agent.Agent;
+
 public class Board extends Observable
 {
 	private int sizeX;
 	private int sizeY;
 
-	private Unit[][] map;
+	private Agent[][] map;
 	
 	private boolean isRunning;
 
@@ -15,7 +17,7 @@ public class Board extends Observable
 	{
 		this.sizeX = sizeX;
 		this.sizeY = sizeY;
-		map = new Unit[sizeX][sizeY];
+		map = new Agent[sizeX][sizeY];
 		isRunning = false;
 	}
 
@@ -34,56 +36,52 @@ public class Board extends Observable
 		return isRunning;
 	}
 	
-	public boolean isValidPos(int x, int y)
+	public boolean isValidPos(Point pos)
 	{
-		if (x < 0 || x >= sizeX)
+		if (pos.x < 0 || pos.x >= sizeX)
 			return false;
 		
-		if (y < 0 || y >= sizeY)
+		if (pos.y < 0 || pos.y >= sizeY)
 			return false;
 		
 		return true;
 	}
 	
-	public Unit getUnit(int x, int y)
+	public Agent getAgent(Point pos)
 	{
-		if (!isValidPos(x, y))
+		if (!isValidPos(pos))
 			return null;
 		
-		return map[x][y];
+		return map[pos.x][pos.y];
 	}
 	
-	public void addUnit(Unit unit) throws Exception
+	public void addAgent(Agent agent) throws Exception
 	{
-		int x = unit.getXPos(), y = unit.getYPos();
+		Point pos = agent.getPos();
 		
-		if (!isValidPos(x, y))
-			throw new Exception("Unit's position ("+x+","+y+") is off the map ("+sizeX+","+sizeY+")");
+		if (!isValidPos(pos))
+			throw new Exception("Unit's position ("+pos.x+","+pos.y+") is off the map ("+sizeX+","+sizeY+")");
 		
-		unit.setBoard(this);
-		map[x][y] = unit;
+		agent.setBoard(this);
+		map[pos.x][pos.y] = agent;
 		
 		notifyObservers();
 	}
 	
-	public synchronized void moveUnit(Unit unit, Point next)
+	public synchronized void moveAgent(Agent agent, Point dest) throws Exception
 	{
-		moveUnit(unit, next.x, next.y);
-	}
-	
-	public synchronized void moveUnit(Unit unit, int xDest, int yDest)
-	{
-		int xSrc = unit.getXPos();
-		int ySrc = unit.getYPos();
+		Point src = agent.getPos();
 		
-		if (!isValidPos(xSrc, ySrc) || !isValidPos(xDest, yDest))
-			return;
+		if (!isValidPos(src))
+			throw new Exception("Source position ("+src.x+","+src.y+") is off the map ("+sizeX+","+sizeY+")");
 		
-		Unit temp = getUnit(xSrc, ySrc);
-		map[xSrc][ySrc] = null;
-		map[xDest][yDest] = temp;
-		temp.setXPos(xDest);
-		temp.setYPos(yDest);
+		if (!isValidPos(dest))
+			throw new Exception("Destination position ("+dest.x+","+dest.y+") is off the map ("+sizeX+","+sizeY+")");
+		
+		Agent temp = getAgent(src);
+		map[src.x][src.y] = null;
+		map[dest.x][dest.y] = temp;
+		temp.setPos(dest);
 		
 		notifyObservers();
 	}
