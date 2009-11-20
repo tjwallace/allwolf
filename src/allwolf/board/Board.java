@@ -48,12 +48,12 @@ public abstract class Board extends Observable
 		return "Board ("+sizeX+","+sizeY+")";
 	}
 	
-	abstract public void run();
+	public abstract void run();
 
-	abstract public void moveAgent(Agent agent, Point dest) throws MoveException;
+	public abstract void moveAgent(Agent agent, Point dest) throws MoveException;
 
-	abstract public void addAgent(Agent agent) throws Exception;
+	public abstract void addAgent(Agent agent) throws Exception;
 
-	abstract public Agent getAgent(Point pos);
+	public abstract Agent getAgent(Point pos);
 
 }
