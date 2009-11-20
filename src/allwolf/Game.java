@@ -9,7 +9,7 @@ public class Game implements Observer
 
 	public Game()
 	{
-		board = new Board(50, 50);
+		board = new ArrayBoard(50, 50);
 		board.addObserver(this);
 	}
 

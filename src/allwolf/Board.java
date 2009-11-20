@@ -4,21 +4,20 @@ import java.util.Observable;
 
 import allwolf.agent.Agent;
 
-public class Board extends Observable
+public abstract class Board extends Observable
 {
-	private int sizeX;
-	private int sizeY;
+	protected int sizeX;
 
-	private Agent[][] map;
+	protected int sizeY;
 	
-	private boolean isRunning;
+	protected boolean isRunning;
 
 	public Board(int sizeX, int sizeY)
 	{
+		super();
 		this.sizeX = sizeX;
 		this.sizeY = sizeY;
-		map = new Agent[sizeX][sizeY];
-		isRunning = false;
+		this.isRunning = false;
 	}
 
 	public int getSizeX()
@@ -30,82 +29,29 @@ public class Board extends Observable
 	{
 		return sizeY;
 	}
-	
+
 	public boolean isRunning()
 	{
 		return isRunning;
 	}
-	
+
 	public boolean isValidPos(Point pos)
 	{
-		if (pos.x < 0 || pos.x >= sizeX)
-			return false;
-		
-		if (pos.y < 0 || pos.y >= sizeY)
-			return false;
-		
-		return true;
+		return !(pos.x < 0 || pos.x >= sizeX) && !(pos.y < 0 || pos.y >= sizeY);
 	}
-	
-	public Agent getAgent(Point pos)
-	{
-		if (!isValidPos(pos))
-			return null;
-		
-		return map[pos.x][pos.y];
-	}
-	
-	public void addAgent(Agent agent) throws Exception
-	{
-		Point pos = agent.getPos();
-		
-		if (!isValidPos(pos))
-			throw new Exception("Unit's position ("+pos.x+","+pos.y+") is off the map ("+sizeX+","+sizeY+")");
-		
-		agent.setBoard(this);
-		map[pos.x][pos.y] = agent;
-		
-		notifyObservers();
-	}
-	
-	public synchronized void moveAgent(Agent agent, Point dest) throws MoveException
-	{
-		Point src = agent.getPos();
-		
-		if (!isValidPos(src))
-			throw new MoveException(agent, dest);
-		
-		if (!isValidPos(dest))
-			throw new MoveException(agent, dest);
-		
-		Agent temp = getAgent(src);
-		map[src.x][src.y] = null;
-		map[dest.x][dest.y] = temp;
-		temp.setPos(dest);
-		
-		notifyObservers();
-	}
-	
-	public void run()
-	{
-		if (isRunning)
-			return;
-		
-		for(int x = 0 ; x < sizeX ; x++)
-		{
-			for (int y = 0 ; y < sizeY ; y++)
-			{
-				if (map[x][y] != null)
-					map[x][y].start();
-			}
-		}
-		
-		isRunning = true;
-	}
-	
+
 	@Override
 	public String toString()
 	{
 		return "Board ("+sizeX+","+sizeY+")";
 	}
+	
+	abstract public void run();
+
+	abstract public void moveAgent(Agent agent, Point dest) throws MoveException;
+
+	abstract public void addAgent(Agent agent) throws Exception;
+
+	abstract public Agent getAgent(Point pos);
+
 }
