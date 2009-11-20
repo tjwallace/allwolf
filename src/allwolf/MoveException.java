@@ -7,7 +7,6 @@ public class MoveException extends Exception
 	private static final long serialVersionUID = 1L;
 	
 	private Agent agent;
-
 	private Point dest;
 	
 	public MoveException(Agent agent, Point dest)

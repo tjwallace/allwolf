@@ -68,15 +68,15 @@ public class Board extends Observable
 		notifyObservers();
 	}
 	
-	public synchronized void moveAgent(Agent agent, Point dest) throws Exception
+	public synchronized void moveAgent(Agent agent, Point dest) throws MoveException
 	{
 		Point src = agent.getPos();
 		
 		if (!isValidPos(src))
-			throw new Exception("Source position ("+src.x+","+src.y+") is off the map ("+sizeX+","+sizeY+")");
+			throw new MoveException(agent, dest);
 		
 		if (!isValidPos(dest))
-			throw new Exception("Destination position ("+dest.x+","+dest.y+") is off the map ("+sizeX+","+sizeY+")");
+			throw new MoveException(agent, dest);
 		
 		Agent temp = getAgent(src);
 		map[src.x][src.y] = null;

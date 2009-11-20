@@ -2,8 +2,8 @@ package allwolf;
 
 public final class Point
 {
-	public int x;
-	public int y;
+	public final int x;
+	public final int y;
 	
 	public Point(int x, int y)
 	{
@@ -32,27 +32,45 @@ public final class Point
 	}
 	
 	/**
-	 * Check f the point is to the left of a given point
+	 * Check if the point is to the left of a given point
 	 * @param p Point of reference
 	 * @return {@link Boolean}
 	 */
-	public boolean isLeft(Point p)
+	public boolean isLeftOf(Point p)
 	{
 		return (x+1) == p.x && y == p.y;
 	}
 	
 	/**
-	 * Check f the point is to the right of a given point
+	 * Check if the point is to the right of a given point
 	 * @param p Point of reference
 	 * @return {@link Boolean}
 	 */
-	public boolean isRight(Point p)
+	public boolean isRightOf(Point p)
 	{
 		return (x-1) == p.x && y == p.y;
 	}
 	
+	public int distanceTo(Point p)
+	{
+		return Math.abs(x - p.x) + Math.abs(y - p.y);
+	}
+	
 	public boolean equals(int x, int y)
 	{
-		return this.x == x && this.y == y;
+		return equals(new Point(x, y));
+	}
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (obj instanceof Point)
+		{
+			Point p = (Point)obj;
+			return x == p.x && y == p.y;
+		}
+		else
+			return false;
+		
 	}
 }
