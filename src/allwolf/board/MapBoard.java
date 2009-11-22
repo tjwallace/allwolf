@@ -2,6 +2,7 @@ package allwolf.board;
 
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import allwolf.MoveException;
 import allwolf.Point;
@@ -58,10 +59,8 @@ public class MapBoard extends Board
 	@Override
 	public void run()
 	{
-		for (Object agent : map.entrySet().toArray())
-		{
-			((Agent) agent).start();
-		}
+		for(Entry<Point, Agent> obj : map.entrySet())
+			obj.getValue().start();
 	}
 
 }

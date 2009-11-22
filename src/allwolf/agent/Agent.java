@@ -53,7 +53,7 @@ abstract public class Agent extends Thread
 		{
 			for (int y = position.y - sightRange ; y <= position.y + sightRange ; y ++)
 			{
-				if (position.equals(x, y))
+				if (!board.isValidPos(new Point(x, y)) || position.equals(x, y))
 					continue;
 				
 				Agent a = board.getAgent(new Point(x, y));
@@ -67,10 +67,8 @@ abstract public class Agent extends Thread
 
 	protected boolean isValidMove(Point dest)
 	{
-		if (!board.isValidPos(dest))
-			return false;
-
-		return dest.isAbove(position) || dest.isBelow(position) || dest.isLeftOf(position) || dest.isRightOf(position);
+		return board.isValidPos(dest) &&
+				(dest.isAbove(position) || dest.isBelow(position) || dest.isLeftOf(position) || dest.isRightOf(position));
 	}
 
 	/**
