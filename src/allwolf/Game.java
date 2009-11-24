@@ -23,7 +23,7 @@ public class Game implements Observer
 
 	public void update(Observable o, Object arg)
 	{
-		System.out.println("Game recieved "+arg+" update from "+o);
+		System.out.println("Game recieved " + arg + " update from " + o);
 	}
 
 }

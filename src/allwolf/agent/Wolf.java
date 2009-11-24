@@ -1,12 +1,12 @@
 package allwolf.agent;
 
-import allwolf.Point;
 import allwolf.board.Board;
+import allwolf.math.Point;
 
 public final class Wolf extends Agent
 {
 	public static final int SIGHT_RANGE = 4;
-	
+
 	public Wolf()
 	{
 		this(null, null);

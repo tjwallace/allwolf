@@ -2,17 +2,16 @@ package allwolf.board;
 
 import java.util.Observable;
 
-import allwolf.MoveException;
-import allwolf.Point;
 import allwolf.PositionException;
 import allwolf.agent.Agent;
+import allwolf.math.Point;
 
 public abstract class Board extends Observable
 {
 	protected int sizeX;
 
 	protected int sizeY;
-	
+
 	protected boolean isRunning;
 
 	public Board(int sizeX, int sizeY)
@@ -43,13 +42,32 @@ public abstract class Board extends Observable
 		return !(pos.x < 0 || pos.x >= sizeX) && !(pos.y < 0 || pos.y >= sizeY);
 	}
 
+	protected void isValidMove(Point src, Point dest) throws PositionException
+	{
+		if (!isValidPos(src))
+			throw new PositionException("Agent source position is not valid", src);
+
+		if (!isValidPos(dest))
+			throw new PositionException("Agent destination position is not valid", dest);
+	}
+
 	@Override
 	public String toString()
 	{
-		return "Board ("+sizeX+","+sizeY+")";
+		return "Board (" + sizeX + "," + sizeY + ")";
+	}
+
+	public void run()
+	{
+		if (isRunning)
+			return;
+		
+		Boolean success = execRun();
+		
+		isRunning = success;
 	}
 	
-	public abstract void run();
+	protected abstract boolean execRun();
 
 	public abstract void moveAgent(Agent agent, Point dest) throws PositionException;
 

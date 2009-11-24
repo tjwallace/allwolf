@@ -2,15 +2,15 @@ package allwolf.agent;
 
 import java.util.ArrayList;
 
-import allwolf.Point;
 import allwolf.board.Board;
+import allwolf.math.Point;
 
 abstract public class Agent extends Thread
 {
 	protected Board board;
 
 	protected Point position;
-	
+
 	protected int sightRange;
 
 	public Agent()
@@ -39,36 +39,36 @@ abstract public class Agent extends Thread
 	{
 		this.position = pos;
 	}
-	
+
 	public int getSightRange()
 	{
 		return sightRange;
 	}
-	
+
 	protected ArrayList<Agent> getVisibleAgents()
 	{
 		ArrayList<Agent> agents = new ArrayList<Agent>();
-		
-		for (int x = position.x - sightRange ; x <= position.x + sightRange ; x++)
+
+		for (int x = position.x - sightRange; x <= position.x + sightRange; x++)
 		{
-			for (int y = position.y - sightRange ; y <= position.y + sightRange ; y ++)
+			for (int y = position.y - sightRange; y <= position.y + sightRange; y++)
 			{
 				if (!board.isValidPos(new Point(x, y)) || position.equals(x, y))
 					continue;
-				
+
 				Agent a = board.getAgent(new Point(x, y));
 				if (a != null)
 					agents.add(a);
 			}
 		}
-		
+
 		return agents;
 	}
 
 	protected boolean isValidMove(Point dest)
 	{
-		return board.isValidPos(dest) &&
-				(dest.isAbove(position) || dest.isBelow(position) || dest.isLeftOf(position) || dest.isRightOf(position));
+		return board.isValidPos(dest)
+				&& (dest.isAbove(position) || dest.isBelow(position) || dest.isLeftOf(position) || dest.isRightOf(position));
 	}
 
 	/**
@@ -81,17 +81,16 @@ abstract public class Agent extends Thread
 		try
 		{
 			board.moveAgent(this, nextPos());
-		}
-		catch (Exception e)
+		} catch (Exception e)
 		{
-			System.err.println("Caught exception: "+e);
+			System.err.println("Caught exception: " + e);
 		}
-		
+
 		return canContinue();
 	}
 
 	abstract protected Point nextPos();
-	
+
 	abstract protected boolean canContinue();
 
 	@Override
