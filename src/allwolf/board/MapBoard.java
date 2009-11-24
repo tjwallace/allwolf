@@ -1,8 +1,8 @@
 package allwolf.board;
 
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import allwolf.PositionException;
 import allwolf.agent.Agent;
@@ -10,12 +10,12 @@ import allwolf.math.Point;
 
 public class MapBoard extends Board
 {
-	private Map<Point, Agent> map;
+	private ConcurrentMap<Point, Agent> map;
 
 	public MapBoard(int sizeX, int sizeY)
 	{
 		super(sizeX, sizeY);
-		map = new TreeMap<Point, Agent>();
+		map = new ConcurrentHashMap<Point, Agent>();
 	}
 
 	@Override
