@@ -2,6 +2,7 @@ package allwolf.board;
 
 import allwolf.MoveException;
 import allwolf.Point;
+import allwolf.PositionException;
 import allwolf.agent.Agent;
 
 public class ArrayBoard extends Board
@@ -24,12 +25,12 @@ public class ArrayBoard extends Board
 	}
 	
 	@Override
-	public void addAgent(Agent agent) throws Exception
+	public void addAgent(Agent agent) throws PositionException
 	{
 		Point pos = agent.getPos();
 		
 		if (!isValidPos(pos))
-			throw new Exception("Unit's position ("+pos.x+","+pos.y+") is off the map ("+sizeX+","+sizeY+")");
+			throw new PositionException("Unit's position is off the map ("+sizeX+","+sizeY+")", pos);
 		
 		agent.setBoard(this);
 		map[pos.x][pos.y] = agent;
@@ -38,15 +39,15 @@ public class ArrayBoard extends Board
 	}
 	
 	@Override
-	public synchronized void moveAgent(Agent agent, Point dest) throws MoveException
+	public synchronized void moveAgent(Agent agent, Point dest) throws PositionException
 	{
 		Point src = agent.getPos();
 		
 		if (!isValidPos(src))
-			throw new MoveException(agent, src);
+			throw new PositionException("Agent source position is not valid", src);
 		
 		if (!isValidPos(dest))
-			throw new MoveException(agent, dest);
+			throw new PositionException("Agent destination position is not valid", dest);
 		
 		map[src.x][src.y] = null;
 		map[dest.x][dest.y] = agent;

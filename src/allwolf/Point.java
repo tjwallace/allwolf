@@ -85,4 +85,10 @@ public final class Point implements Comparable<Point>
 		else
 			return (y > o.y) ? 1 : -1;			
 	}
+	
+	@Override
+	public String toString()
+	{
+		return "("+x+","+y+")";
+	}
 }

@@ -4,6 +4,7 @@ import java.util.Observable;
 
 import allwolf.MoveException;
 import allwolf.Point;
+import allwolf.PositionException;
 import allwolf.agent.Agent;
 
 public abstract class Board extends Observable
@@ -50,9 +51,9 @@ public abstract class Board extends Observable
 	
 	public abstract void run();
 
-	public abstract void moveAgent(Agent agent, Point dest) throws MoveException;
+	public abstract void moveAgent(Agent agent, Point dest) throws PositionException;
 
-	public abstract void addAgent(Agent agent) throws Exception;
+	public abstract void addAgent(Agent agent) throws PositionException;
 
 	public abstract Agent getAgent(Point pos);
 
