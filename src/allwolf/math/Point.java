@@ -10,63 +10,45 @@ public final class Point implements Comparable<Point>
 		this.x = x;
 		this.y = y;
 	}
-
-	/**
-	 * Check if the point is above a given point
-	 * 
-	 * @param p
-	 *            Point of reference
-	 * @return {@link Boolean}
-	 */
-	public boolean isAbove(Point p)
+	
+	public Point getAbove()
 	{
-		return x == p.x && (y + 1) == p.y;
+		return new Point(x, y - 1);
+	}
+	
+	public Point getBelow()
+	{
+		return new Point(x, y + 1);
+	}
+	
+	public Point getLeft()
+	{
+		return new Point(x - 1, y);
+	}
+	
+	public Point getRight()
+	{
+		return new Point(x + 1, y);
 	}
 
-	/**
-	 * Check if the point is below a given point
-	 * 
-	 * @param p
-	 *            Point of reference
-	 * @return {@link Boolean}
-	 */
-	public boolean isBelow(Point p)
+	public int xDistance(Point p)
 	{
-		return x == p.x && (y - 1) == p.y;
+		return Math.abs(x - p.x);
 	}
-
-	/**
-	 * Check if the point is to the left of a given point
-	 * 
-	 * @param p
-	 *            Point of reference
-	 * @return {@link Boolean}
-	 */
-	public boolean isLeftOf(Point p)
+	
+	public int yDistance(Point p)
 	{
-		return (x + 1) == p.x && y == p.y;
+		return Math.abs(y - p.y);
 	}
-
-	/**
-	 * Check if the point is to the right of a given point
-	 * 
-	 * @param p
-	 *            Point of reference
-	 * @return {@link Boolean}
-	 */
-	public boolean isRightOf(Point p)
-	{
-		return (x - 1) == p.x && y == p.y;
-	}
-
+	
 	public int distanceTo(Point p)
 	{
-		return Math.abs(x - p.x) + Math.abs(y - p.y);
+		return xDistance(p) + yDistance(p);
 	}
 	
 	public int area(Point p)
 	{
-		return Math.abs(x - p.x) * Math.abs(y - p.y);
+		return xDistance(p) * yDistance(p);
 	}
 	
 	@Override

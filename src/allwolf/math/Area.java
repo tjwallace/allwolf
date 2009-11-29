@@ -66,6 +66,16 @@ public final class Area
 		return bottomRight.y;
 	}
 	
+	public final int x()
+	{
+		return topLeft.xDistance(bottomRight);
+	}
+	
+	public final int y()
+	{
+		return topLeft.yDistance(bottomRight);
+	}
+	
 	public final int area()
 	{
 		return area;

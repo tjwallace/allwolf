@@ -1,24 +1,30 @@
 package allwolf.agent;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CyclicBarrier;
 
 import allwolf.board.Board;
+import allwolf.board.PositionException;
+import allwolf.math.Area;
 import allwolf.math.Point;
 
 abstract public class Agent extends Thread
 {
-	protected CyclicBarrier barrier;
+	private CyclicBarrier barrier;
 	protected Board board;
 	protected Point position;
 	protected int sight;
 	protected int speed;
+	
+	private volatile boolean kill;
 
-	public Agent(CyclicBarrier barrier, int sight, int speed)
+	public Agent(CyclicBarrier barrier, Point position, int sight, int speed)
 	{
 		this.barrier = barrier;
+		this.position = position;
 		this.sight = sight;
 		this.speed = speed;
+		this.kill = false;
 	}
 
 	public final void setBoard(Board board)
@@ -26,44 +32,56 @@ abstract public class Agent extends Thread
 		this.board = board;
 	}
 
-	public final Point getPos()
+	public final Point getPosition()
 	{
 		return position;
 	}
 
-	public final void setPos(Point pos)
+	public final void setPosition(Point position)
 	{
-		this.position = pos;
+		this.position = position;
 	}
-
-	public final int getSightRange()
+	
+	public final int sight()
 	{
 		return sight;
 	}
-
-	protected ArrayList<Agent> getVisibleAgents()
+	
+	public final int speed()
 	{
-		ArrayList<Agent> agents = new ArrayList<Agent>();
-
-		for (int x = position.x - sight; x <= position.x + sight; x++)
-		{
-			for (int y = position.y - sight; y <= position.y + sight; y++)
-			{
-				if (!board.isValidPos(new Point(x, y)) || position.equals(x, y))
-					continue;
-
-				Agent a = board.getAgent(new Point(x, y));
-				if (a != null)
-					agents.add(a);
-			}
-		}
-
-		return agents;
+		return speed;
+	}
+	
+	public synchronized void kill()
+	{
+		kill = true;
+	}
+	
+	protected Area getVision()
+	{
+		Point tl = new Point(position.x - sight, position.y - sight);
+		Point br = new Point(position.x + sight, position.y + sight);
+		return new Area(tl, br);
+	}
+	
+	protected List<Agent> getAgentsInSight()
+	{
+		return board.getAgents(getVision());
+	}
+	
+	public boolean isWolf()
+	{
+		return this instanceof Wolf;
+	}
+	
+	public boolean isSheep()
+	{
+		return !isWolf();
 	}
 
 	protected boolean isValidMove(Point dest)
 	{
-		return board.isValidPos(dest) && (dest.isAbove(position) || dest.isBelow(position) || dest.isLeftOf(position) || dest.isRightOf(position));
+		return position.distanceTo(dest) <= speed;
 	}
 
 	/**
@@ -71,24 +89,28 @@ abstract public class Agent extends Thread
 	 * 
 	 * @return <code>true</code> if the thread should continue, <code>false</code> otherwise.
 	 */
-	protected boolean step()
+	private boolean step()
 	{
-		try
+		boolean hasMoved = false;
+		while(!hasMoved)
 		{
-			board.moveAgent(this, nextPos());
-			barrier.await();
-		}
-		catch (Exception e)
-		{
-			System.err.println("Caught exception: " + e);
+			try
+			{
+				board.moveAgent(this, nextPos());
+				hasMoved = true;
+				barrier.await();
+			}
+			catch (Exception e)
+			{
+				System.err.println("Exception in step()...");
+				System.err.println("  "+e);
+			}
 		}
 
-		return canContinue();
+		return !kill;
 	}
 
-	abstract protected Point nextPos();
-
-	abstract protected boolean canContinue();
+	protected abstract Point nextPos();
 
 	@Override
 	public void run()
@@ -96,6 +118,38 @@ abstract public class Agent extends Thread
 		boolean run = true;
 		while (run)
 			run = step();
+		
+		try
+		{
+			board.removeAgent(this);
+		}
+		catch (PositionException e)
+		{
+			System.err.println("Agent couldn't remove themselves from the board");
+			e.printStackTrace();
+		}
+	}
+	
+	protected static List<Agent> filterWolves(List<Agent> agents)
+	{
+		for(Agent a : agents)
+		{
+			if (a instanceof Sheep)
+				agents.remove(a);
+		}
+		
+		return agents;
+	}
+	
+	protected static List<Agent> filterSheep(List<Agent> agents)
+	{
+		for(Agent a : agents)
+		{
+			if (a instanceof Wolf)
+				agents.remove(a);
+		}
+		
+		return agents;
 	}
 
 }
