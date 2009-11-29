@@ -1,28 +1,24 @@
 package allwolf.agent;
 
 import java.util.ArrayList;
+import java.util.concurrent.CyclicBarrier;
 
 import allwolf.board.Board;
 import allwolf.math.Point;
 
 abstract public class Agent extends Thread
 {
+	protected CyclicBarrier barrier;
 	protected Board board;
-
 	protected Point position;
+	protected int sight;
+	protected int speed;
 
-	protected int sightRange;
-
-	public Agent()
+	public Agent(CyclicBarrier barrier, int sight, int speed)
 	{
-		this(null, new Point(-1, -1), 0);
-	}
-
-	public Agent(Board board, Point pos, int sightRange)
-	{
-		this.board = board;
-		this.position = pos;
-		this.sightRange = sightRange;
+		this.barrier = barrier;
+		this.sight = sight;
+		this.speed = speed;
 	}
 
 	public final void setBoard(Board board)
@@ -30,28 +26,28 @@ abstract public class Agent extends Thread
 		this.board = board;
 	}
 
-	public Point getPos()
+	public final Point getPos()
 	{
 		return position;
 	}
 
-	public void setPos(Point pos)
+	public final void setPos(Point pos)
 	{
 		this.position = pos;
 	}
 
-	public int getSightRange()
+	public final int getSightRange()
 	{
-		return sightRange;
+		return sight;
 	}
 
 	protected ArrayList<Agent> getVisibleAgents()
 	{
 		ArrayList<Agent> agents = new ArrayList<Agent>();
 
-		for (int x = position.x - sightRange; x <= position.x + sightRange; x++)
+		for (int x = position.x - sight; x <= position.x + sight; x++)
 		{
-			for (int y = position.y - sightRange; y <= position.y + sightRange; y++)
+			for (int y = position.y - sight; y <= position.y + sight; y++)
 			{
 				if (!board.isValidPos(new Point(x, y)) || position.equals(x, y))
 					continue;
@@ -67,8 +63,7 @@ abstract public class Agent extends Thread
 
 	protected boolean isValidMove(Point dest)
 	{
-		return board.isValidPos(dest)
-				&& (dest.isAbove(position) || dest.isBelow(position) || dest.isLeftOf(position) || dest.isRightOf(position));
+		return board.isValidPos(dest) && (dest.isAbove(position) || dest.isBelow(position) || dest.isLeftOf(position) || dest.isRightOf(position));
 	}
 
 	/**
@@ -81,7 +76,9 @@ abstract public class Agent extends Thread
 		try
 		{
 			board.moveAgent(this, nextPos());
-		} catch (Exception e)
+			barrier.await();
+		}
+		catch (Exception e)
 		{
 			System.err.println("Caught exception: " + e);
 		}

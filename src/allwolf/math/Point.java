@@ -1,10 +1,14 @@
 package allwolf.math;
 
-public final class Point extends Dimension2D implements Comparable<Point>
+public final class Point implements Comparable<Point>
 {
+	public final int x;
+	public final int y;
+	
 	public Point(int x, int y)
 	{
-		super(x, y);
+		this.x = x;
+		this.y = y;
 	}
 
 	/**
@@ -60,6 +64,11 @@ public final class Point extends Dimension2D implements Comparable<Point>
 		return Math.abs(x - p.x) + Math.abs(y - p.y);
 	}
 	
+	public int area(Point p)
+	{
+		return Math.abs(x - p.x) * Math.abs(y - p.y);
+	}
+	
 	@Override
 	public int compareTo(Point p)
 	{
@@ -69,5 +78,25 @@ public final class Point extends Dimension2D implements Comparable<Point>
 			return (x > p.x) ? 1 : -1;
 		else
 			return (y > p.y) ? 1 : -1;
+	}
+	
+	public boolean equals(int x, int y)
+	{
+		return x == this.x && y == this.y;
+	}
+	
+	@Override
+	public boolean equals(Object o)
+	{
+		if (o instanceof Point)
+			return ((Point) o).x == x && ((Point) o).y == y;
+		else
+			return false;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "(" + x + "," + y + ")";
 	}
 }

@@ -1,20 +1,17 @@
 package allwolf.agent;
 
-import allwolf.board.Board;
+import java.util.concurrent.CyclicBarrier;
+
 import allwolf.math.Point;
 
 public final class Wolf extends Agent
 {
-	public static final int SIGHT_RANGE = 4;
+	public static final int SIGHT = 4;
+	public static final int SPEED = 2;
 
-	public Wolf()
+	public Wolf(CyclicBarrier barrier)
 	{
-		this(null, null);
-	}
-
-	public Wolf(Board board, Point pos)
-	{
-		super(board, pos, SIGHT_RANGE);
+		super(barrier, SIGHT, SPEED);
 	}
 
 	@Override
