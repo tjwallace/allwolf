@@ -4,8 +4,8 @@ import java.util.Collection;
 
 public final class Point implements Comparable<Point>
 {
-	public final int x;
-	public final int y;
+	public int x;
+	public int y;
 	
 	public Point(int x, int y)
 	{
@@ -13,24 +13,26 @@ public final class Point implements Comparable<Point>
 		this.y = y;
 	}
 	
-	public Point getAbove()
+	public Point(Point position)
 	{
-		return new Point(x, y - 1);
+		this.x = position.x;
+		this.y = position.y;
 	}
 	
-	public Point getBelow()
+	public void translate(int x, int y)
 	{
-		return new Point(x, y + 1);
+		translateX(x);
+		translateY(y);
 	}
-	
-	public Point getLeft()
+
+	public void translateY(int y)
 	{
-		return new Point(x - 1, y);
+		this.y += y;		
 	}
-	
-	public Point getRight()
+
+	public void translateX(int x)
 	{
-		return new Point(x + 1, y);
+		this.x += x;
 	}
 
 	public int xDistance(Point p)

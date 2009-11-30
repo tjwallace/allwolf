@@ -77,7 +77,7 @@ public class Board extends Observable
 			throw new PositionException("Agent source position is not valid", src);
 		
 		if (map.get(src) == null)
-			throw new PositionException("No agent at this position", src);
+			throw new PositionException("No agent at source position", src);
 
 		if (!isValidPos(dest))
 			throw new PositionException("Agent destination position is not valid", dest);
