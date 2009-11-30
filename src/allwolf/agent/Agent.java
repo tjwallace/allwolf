@@ -1,5 +1,6 @@
 package allwolf.agent;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CyclicBarrier;
 
@@ -81,7 +82,19 @@ abstract public class Agent extends Thread
 
 	protected boolean isValidMove(Point dest)
 	{
-		return position.distanceTo(dest) <= speed;
+		return position.distanceTo(dest) <= speed && board.isValidPos(dest);
+	}
+	
+	protected Agent getClosestAgent(List<Agent> sheep)
+	{
+		Agent closest = sheep.get(0);
+		for (Agent a : sheep)
+		{
+			if (position.distanceTo(a.position) < position.distanceTo(closest.position))
+				closest = a;
+		}
+		
+		return closest;
 	}
 
 	/**
@@ -103,7 +116,7 @@ abstract public class Agent extends Thread
 			catch (Exception e)
 			{
 				System.err.println("Exception in step()...");
-				System.err.println("  "+e);
+				System.err.println("> "+e);
 			}
 		}
 
@@ -125,8 +138,8 @@ abstract public class Agent extends Thread
 		}
 		catch (PositionException e)
 		{
-			System.err.println("Agent couldn't remove themselves from the board");
-			e.printStackTrace();
+			System.err.println("Agent couldn't remove itself from the board");
+			System.err.println("> "+e);
 		}
 	}
 	
@@ -150,6 +163,16 @@ abstract public class Agent extends Thread
 		}
 		
 		return agents;
+	}
+	
+	public static List<Point> getPoints(List<Agent> agents)
+	{
+		List<Point> points = new ArrayList<Point>();
+		
+		for (Agent a : agents)
+			points.add(a.position);
+		
+		return points;
 	}
 
 }

@@ -18,7 +18,12 @@ public final class Sheep extends Agent
 	@Override
 	protected Point nextPos()
 	{
-		List<Agent> wolves = filterWolves(getAgentsInSight());
+		List<Point> points = getPoints(filterWolves(getAgentsInSight()));
+		
+		// get average location of the visible wolves
+		Point avg = Point.getAverage(points);
+		
+		// move away from it
 		
 		
 		return null;

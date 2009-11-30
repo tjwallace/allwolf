@@ -21,12 +21,7 @@ public final class Wolf extends Agent
 		List<Agent> sheep = filterSheep(getAgentsInSight());
 		
 		// find closest sheep
-		Agent min = sheep.get(0);
-		for (Agent a : sheep)
-		{
-			if (position.distanceTo(a.position) < position.distanceTo(min.position))
-				min = a;
-		}
+		Agent closest = getClosestAgent(sheep);
 		
 		// move towards closest sheep
 		
