@@ -7,7 +7,7 @@ import allwolf.math.Point;
 
 public final class Sheep extends Agent
 {
-	public static final int SIGHT = 2;
+	public static final int SIGHT = 3;
 	public static final int SPEED = 1;
 
 	public Sheep(CyclicBarrier barrier, Point position)
@@ -25,13 +25,19 @@ public final class Sheep extends Agent
 			Point avg = Point.getAverage(points);
 			
 			// move away from it
-			int xDir = Integer.signum(avg.x - position.x);
-			int yDir = Integer.signum(avg.y - position.y);
+			int xDir = Integer.signum(position.x - avg.x);
+			int yDir = Integer.signum(position.y - avg.y);
 			
 			return calculateMove(xDir, yDir);
 		}
 		else
 			return randomMove();
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "Sheep @ "+position;
 	}
 
 }

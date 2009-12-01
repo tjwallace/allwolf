@@ -32,6 +32,7 @@ public class TextGUI implements BoardGUI
 			}
 			System.out.println();
 		}
+		System.out.println();
 	}
 
 }

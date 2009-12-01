@@ -1,13 +1,14 @@
 package allwolf.board;
 
+import allwolf.agent.Agent;
 import allwolf.math.Point;
 
 public class OccupiedPositionException extends PositionException
 {
 	private static final long serialVersionUID = 1L;
 	
-	public OccupiedPositionException(Point position)
+	public OccupiedPositionException(Agent agent, Point position)
 	{
-		super("Agent already present at this position", position);
+		super(agent+" already present at this position", position);
 	}
 }

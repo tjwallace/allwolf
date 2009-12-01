@@ -53,7 +53,7 @@ abstract public class Agent extends Thread
 		return speed;
 	}
 	
-	public synchronized void kill()
+	public void kill()
 	{
 		kill = true;
 	}
@@ -83,9 +83,14 @@ abstract public class Agent extends Thread
 	protected Point randomMove()
 	{
 		// pick random directions
-		Point goal = board.getRandomPosition();
-		int xDir = Integer.signum(position.x - goal.x);
-		int yDir = Integer.signum(position.y - goal.y);
+		Point goal;
+		int xDir = 0, yDir = 0;
+		while (xDir == 0 && yDir == 0)
+		{
+			goal = board.getRandomPosition();
+			xDir = Integer.signum(goal.x - position.x);
+			yDir = Integer.signum(goal.y - position.y);
+		}
 		
 		return calculateMove(xDir, yDir);
 	}
@@ -104,28 +109,33 @@ abstract public class Agent extends Thread
 		Point next = null;
 		while (range > 0)
 		{
-			// move x
-			next = new Point(moves.peek());
-			if (xDir != 0 && board.isValidPos(next.translateX(xDir)))
+			if (Math.random() > 0.5)
 			{
-				moves.push(next);
-				range--;
+				// move x
+				next = new Point(moves.peek());
+				if (xDir != 0)
+				{
+					moves.push(next.translateX(xDir));
+					range--;
+				}
 			}
-			
-			if (checkGoal(moves.peek(), goal))
-				break;
-			
-			// move y
-			next = new Point(moves.peek());
-			if (range > 0 && yDir != 0 && board.isValidPos(next.translateY(yDir)))
+			else
 			{
-				moves.push(next);
-				range--;
+				// move y
+				next = new Point(moves.peek());
+				if (range > 0 && yDir != 0)
+				{
+					moves.push(next.translateY(yDir));
+					range--;
+				}
 			}
 			
 			if (checkGoal(moves.peek(), goal))
 				break;
 		}
+		
+		while (!board.isValidPos(moves.peek()))
+			moves.pop();
 		
 		return moves.peek();
 	}
@@ -149,14 +159,15 @@ abstract public class Agent extends Thread
 			{
 				Point next = nextPos();
 				barrier.await();
-				board.moveAgent(this, next);
+				
+				if (!kill)
+					board.moveAgent(this, next);
+				
 				hasMoved = true;
 			}
 			catch (Exception e)
 			{
-				System.err.println("Exception in step()...");
-				System.err.println("> "+e);
-				e.printStackTrace();
+				System.err.println(this+" in step() > "+e);
 			}
 		}
 
@@ -206,5 +217,4 @@ abstract public class Agent extends Thread
 		
 		return points;
 	}
-
 }

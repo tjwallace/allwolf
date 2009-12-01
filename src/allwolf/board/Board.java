@@ -88,7 +88,7 @@ public class Board extends Observable
 			throw new PositionException("Destination position not valid", dest);
 		
 		if (!src.equals(dest) && map.get(dest) != null)
-			throw new OccupiedPositionException(dest);
+			throw new OccupiedPositionException(map.get(dest), dest);
 	}
 	
 	public Agent getAgent(Point pos)
@@ -104,7 +104,7 @@ public class Board extends Observable
 			throw new PositionException("Unit's position is off the map: "+size, pos);
 
 		if (map.putIfAbsent(pos, agent) != null)
-			throw new OccupiedPositionException(pos);
+			throw new OccupiedPositionException(map.get(pos),pos);
 		
 		agent.setBoard(this);
 		
@@ -119,9 +119,12 @@ public class Board extends Observable
 		{
 			isValidMove(src, dest);
 			
-			map.remove(src);
-			map.put(dest, agent);
-			agent.setPosition(dest);
+			// only move an agent if it exists at src
+			if (map.remove(src, agent))
+			{
+				map.put(dest, agent);
+				agent.setPosition(dest);
+			}
 		}
 		catch (OccupiedPositionException e)
 		{
@@ -132,6 +135,7 @@ public class Board extends Observable
 				Wolf w = new Wolf(game.getBarrier(), dest);
 				map.put(dest, w);
 				w.setBoard(this);
+				w.start();
 			}
 			else
 				throw e;

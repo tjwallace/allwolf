@@ -8,7 +8,7 @@ import allwolf.math.Point;
 public final class Wolf extends Agent
 {
 	public static final int SIGHT = 4;
-	public static final int SPEED = 2;
+	public static final int SPEED = 1;
 
 	public Wolf(CyclicBarrier barrier, Point position)
 	{
@@ -25,8 +25,8 @@ public final class Wolf extends Agent
 		{
 			// move towards closest sheep
 			Point goal = getClosestAgent(sheep).position;
-			int xDir = Integer.signum(position.x - goal.x);
-			int yDir = Integer.signum(position.y - goal.y);
+			int xDir = Integer.signum(goal.x - position.x);
+			int yDir = Integer.signum(goal.y - position.y);
 
 			return calculateMove(xDir, yDir, goal);
 		}
@@ -48,6 +48,12 @@ public final class Wolf extends Agent
 		}
 		
 		return closest;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "Wolf @ "+position;
 	}
 
 }
