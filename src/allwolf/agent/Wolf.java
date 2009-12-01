@@ -20,37 +20,34 @@ public final class Wolf extends Agent
 	{
 		// find closest sheep
 		List<Agent> sheep = filterSheep(getAgentsInSight());
-		Agent closest = getClosestAgent(sheep);
 		
-		// move towards closest sheep
-		Point dest = new Point(position);
-		int range = speed;
-		int xDir = Integer.signum(position.x - closest.getPosition().x);
-		int yDir = Integer.signum(position.y - closest.getPosition().y);
-		while (range > 0)
+		if (sheep.size() > 0)
 		{
-			// move x
-			if (range > 0 && xDir != 0)
-			{
-				dest.translateX(xDir);
-				range--;
-			}
-			
-			if (dest.equals(closest.position))
-				break;
-			
-			// move y
-			if (range > 0 && yDir != 0)
-			{
-				dest.translateY(yDir);
-				range--;
-			}
-			
-			if (dest.equals(closest.position))
-				break;
+			// move towards closest sheep
+			Point goal = getClosestAgent(sheep).position;
+			int xDir = Integer.signum(position.x - goal.x);
+			int yDir = Integer.signum(position.y - goal.y);
+
+			return calculateMove(xDir, yDir, goal);
+		}
+		else
+			return randomMove();
+		
+	}
+	
+	private Agent getClosestAgent(List<Agent> agents)
+	{
+		if (agents.size() == 0)
+			return null;
+		
+		Agent closest = agents.get(0);
+		for (Agent a : agents)
+		{
+			if (position.distanceTo(a.position) < position.distanceTo(closest.position))
+				closest = a;
 		}
 		
-		return dest;
+		return closest;
 	}
 
 }

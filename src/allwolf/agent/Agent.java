@@ -2,10 +2,10 @@ package allwolf.agent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 import java.util.concurrent.CyclicBarrier;
 
 import allwolf.board.Board;
-import allwolf.board.PositionException;
 import allwolf.math.Area;
 import allwolf.math.Point;
 
@@ -58,7 +58,7 @@ abstract public class Agent extends Thread
 		kill = true;
 	}
 	
-	protected Area getVision()
+	public Area getVision()
 	{
 		Point tl = new Point(position.x - sight, position.y - sight);
 		Point br = new Point(position.x + sight, position.y + sight);
@@ -77,24 +77,62 @@ abstract public class Agent extends Thread
 	
 	public boolean isSheep()
 	{
-		return !isWolf();
-	}
-
-	protected boolean isValidMove(Point dest)
-	{
-		return position.distanceTo(dest) <= speed && board.isValidPos(dest);
+		return this instanceof Sheep;
 	}
 	
-	protected Agent getClosestAgent(List<Agent> sheep)
+	protected Point randomMove()
 	{
-		Agent closest = sheep.get(0);
-		for (Agent a : sheep)
+		// pick random directions
+		Point goal = board.getRandomPosition();
+		int xDir = Integer.signum(position.x - goal.x);
+		int yDir = Integer.signum(position.y - goal.y);
+		
+		return calculateMove(xDir, yDir);
+	}
+	
+	protected Point calculateMove(int xDir, int yDir)
+	{
+		return calculateMove(xDir, yDir, null);
+	}
+	
+	protected Point calculateMove(int xDir, int yDir, Point goal)
+	{
+		Stack<Point> moves = new Stack<Point>();
+		moves.push(new Point(position));
+		
+		int range = speed;
+		Point next = null;
+		while (range > 0)
 		{
-			if (position.distanceTo(a.position) < position.distanceTo(closest.position))
-				closest = a;
+			// move x
+			next = new Point(moves.peek());
+			if (xDir != 0 && board.isValidPos(next.translateX(xDir)))
+			{
+				moves.push(next);
+				range--;
+			}
+			
+			if (checkGoal(moves.peek(), goal))
+				break;
+			
+			// move y
+			next = new Point(moves.peek());
+			if (range > 0 && yDir != 0 && board.isValidPos(next.translateY(yDir)))
+			{
+				moves.push(next);
+				range--;
+			}
+			
+			if (checkGoal(moves.peek(), goal))
+				break;
 		}
 		
-		return closest;
+		return moves.peek();
+	}
+	
+	private boolean checkGoal(Point check, Point goal)
+	{
+		return goal != null && check.equals(goal);
 	}
 
 	/**
@@ -109,14 +147,16 @@ abstract public class Agent extends Thread
 		{
 			try
 			{
-				board.moveAgent(this, nextPos());
-				hasMoved = true;
+				Point next = nextPos();
 				barrier.await();
+				board.moveAgent(this, next);
+				hasMoved = true;
 			}
 			catch (Exception e)
 			{
 				System.err.println("Exception in step()...");
 				System.err.println("> "+e);
+				e.printStackTrace();
 			}
 		}
 
@@ -131,38 +171,30 @@ abstract public class Agent extends Thread
 		boolean run = true;
 		while (run)
 			run = step();
-		
-		try
-		{
-			board.removeAgent(this);
-		}
-		catch (PositionException e)
-		{
-			System.err.println("Agent couldn't remove itself from the board");
-			System.err.println("> "+e);
-		}
 	}
 	
 	protected static List<Agent> filterWolves(List<Agent> agents)
 	{
+		List<Agent> wolves = new ArrayList<Agent>();
 		for(Agent a : agents)
 		{
-			if (a instanceof Sheep)
-				agents.remove(a);
+			if (a instanceof Wolf)
+				wolves.add(a);
 		}
 		
-		return agents;
+		return wolves;
 	}
 	
 	protected static List<Agent> filterSheep(List<Agent> agents)
 	{
+		List<Agent> sheep = new ArrayList<Agent>();
 		for(Agent a : agents)
 		{
-			if (a instanceof Wolf)
-				agents.remove(a);
+			if (a instanceof Sheep)
+				sheep.add(a);
 		}
 		
-		return agents;
+		return sheep;
 	}
 	
 	public static List<Point> getPoints(List<Agent> agents)

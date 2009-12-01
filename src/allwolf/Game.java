@@ -1,7 +1,5 @@
 package allwolf;
 
-import java.util.Observable;
-import java.util.Observer;
 import java.util.concurrent.CyclicBarrier;
 
 import allwolf.agent.Agent;
@@ -9,21 +7,26 @@ import allwolf.agent.Sheep;
 import allwolf.agent.Wolf;
 import allwolf.board.Board;
 import allwolf.board.PositionException;
+import allwolf.gui.BoardGUI;
+import allwolf.gui.TextGUI;
 import allwolf.math.Area;
 
-public class Game implements Observer
+public class Game
 {
-	public static final Area SIZE = new Area(50, 50);
+	public static final int SIZE = 20;
 	public static final int NUM_OF_SHEEP = 7;
 	public static final int NUM_OF_WOLVES = 1;
 	
 	private Board board;
 	private CyclicBarrier barrier;
+	private BoardGUI gui;
 
 	public Game()
 	{
-		board = new Board(SIZE);
-		board.addObserver(this);
+		gui = new TextGUI();
+		
+		board = new Board(new Area(SIZE, SIZE), this);
+		board.addObserver(gui);
 		
 		barrier = new CyclicBarrier(NUM_OF_SHEEP + NUM_OF_WOLVES, new EndGameCheck());
 		generateWolves();
@@ -64,35 +67,44 @@ public class Game implements Observer
 		}
 	}
 	
+	public CyclicBarrier getBarrier()
+	{
+		return barrier;
+	}
+	
 	public void run()
 	{
 		for (Agent a : board.getAgents())
 			a.start();
-	}
-
-	public void update(Observable o, Object arg)
-	{
-		System.out.println("Game recieved " + arg + " update from " + o);
 	}
 	
 	private class EndGameCheck implements Runnable
 	{
 		@Override
 		public void run()
-		{
+		{			
+			int sheep = 0, wolves = 0;
+			
 			for (Agent a : board.getAgents())
 			{
 				if (a instanceof Sheep)
-					return;
+					sheep++;
+				else
+					wolves++;
 			}
 			
-			System.out.println("No more sheep left!  GAME OVER");
-			for (Agent a : board.getAgents())
-				a.kill();
-			
-			System.exit(0);
+			if (sheep > 0)
+			{
+				System.out.println("Agents left => Sheep: "+sheep+" | Wolves: "+wolves);
+			}
+			else
+			{
+				System.out.println("No more sheep left!  GAME OVER");
+				for (Agent a : board.getAgents())
+					a.kill();
+				
+				System.exit(0);
+			}
 		}
-		
 	}
-
 }

@@ -1,6 +1,10 @@
 package allwolf.math;
 
-public final class Area
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+public final class Area implements Iterable<Point>
 {
 	private Point topLeft;
 	private Point bottomRight;
@@ -84,5 +88,25 @@ public final class Area
 	public boolean contains(Point p)
 	{
 		return p.x >= topLeft.x && p.y >= topLeft.y && p.x <= bottomRight.x && p.y <= bottomRight.y;
+	}
+
+	@Override
+	public Iterator<Point> iterator()
+	{
+		List<Point> itr = new ArrayList<Point>();
+		
+		for (int y = topLeft.y ; y <= bottomRight.y ; y++)
+		{
+			for (int x = topLeft.x ; x <= bottomRight.x ; x++)
+				itr.add(new Point(x,y));
+		}
+		
+		return itr.iterator();
+	}
+	
+	@Override
+	public String toString()
+	{
+		return x() + " x " + y();
 	}
 }

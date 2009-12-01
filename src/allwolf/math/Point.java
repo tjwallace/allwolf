@@ -19,20 +19,23 @@ public final class Point implements Comparable<Point>
 		this.y = position.y;
 	}
 	
-	public void translate(int x, int y)
+	public Point translate(int x, int y)
 	{
 		translateX(x);
 		translateY(y);
+		return this;
 	}
-
-	public void translateY(int y)
-	{
-		this.y += y;		
-	}
-
-	public void translateX(int x)
+	
+	public Point translateX(int x)
 	{
 		this.x += x;
+		return this;
+	}
+
+	public Point translateY(int y)
+	{
+		this.y += y;
+		return this;
 	}
 
 	public int xDistance(Point p)
@@ -81,6 +84,15 @@ public final class Point implements Comparable<Point>
 	}
 	
 	@Override
+	public int hashCode()
+	{
+		int hash = 1;
+		hash = hash * 31 + x;
+		hash = hash * 31 + y;
+		return hash;
+	}
+	
+	@Override
 	public String toString()
 	{
 		return "(" + x + "," + y + ")";
@@ -88,6 +100,9 @@ public final class Point implements Comparable<Point>
 	
 	public static Point getAverage(Collection<Point> points)
 	{
+		if (points.size() == 0)
+			return null;
+		
 		int x = 0, y = 0;
 		
 		for (Point p : points)

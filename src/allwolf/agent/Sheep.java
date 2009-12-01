@@ -18,33 +18,20 @@ public final class Sheep extends Agent
 	@Override
 	protected Point nextPos()
 	{
-		// get average location of the visible wolves
 		List<Point> points = getPoints(filterWolves(getAgentsInSight()));
-		Point avg = Point.getAverage(points);
-		
-		// move away from it
-		Point dest = new Point(position);
-		int range = speed;
-		int xDir = Integer.signum(avg.x - position.x);
-		int yDir = Integer.signum(avg.y - position.y);
-		while (range > 0)
+		if (points.size() != 0)
 		{
-			// move x
-			if (range > 0 && xDir != 0)
-			{
-				dest.translateX(xDir);
-				range--;
-			}
+			// get average location of the visible wolves
+			Point avg = Point.getAverage(points);
 			
-			// move y
-			if (range > 0 && yDir != 0)
-			{
-				dest.translateY(yDir);
-				range--;
-			}
+			// move away from it
+			int xDir = Integer.signum(avg.x - position.x);
+			int yDir = Integer.signum(avg.y - position.y);
+			
+			return calculateMove(xDir, yDir);
 		}
-		
-		return dest;
+		else
+			return randomMove();
 	}
 
 }
