@@ -87,6 +87,9 @@ public class Game implements Observer
 			}
 			
 			System.out.println("No more sheep left!  GAME OVER");
+			for (Agent a : board.getAgents())
+				a.kill();
+			
 			System.exit(0);
 		}
 		
