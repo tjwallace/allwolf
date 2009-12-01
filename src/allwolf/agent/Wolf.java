@@ -22,19 +22,13 @@ public final class Wolf extends Agent
 		List<Agent> sheep = filterSheep(getAgentsInSight());
 		
 		if (sheep.size() > 0)
-		{
-			// move towards closest sheep
 			return calculateNextPosition(getClosestAgent(sheep).position);
-		}
 		else
 			return randomNextPosition();
 	}
 	
 	private Agent getClosestAgent(List<Agent> agents)
 	{
-		if (agents.size() == 0)
-			return null;
-		
 		Agent closest = agents.get(0);
 		for (Agent a : agents)
 		{

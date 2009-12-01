@@ -76,7 +76,7 @@ public class Board extends Observable
 		return size.contains(pos);
 	}
 
-	protected void isValidMove(Point src, Point dest) throws PositionException
+	protected void validateMove(Point src, Point dest) throws PositionException
 	{
 		if (!isValidPos(src))
 			throw new PositionException("Source position not valid", src);
@@ -85,7 +85,7 @@ public class Board extends Observable
 			throw new EmptyPositionException(src);
 		
 		if (src.equals(dest))
-			throw new PositionException("Cannot move to same position", src);
+			throw new PositionException("Cannot move to source position", src);
 
 		if (!isValidPos(dest))
 			throw new PositionException("Destination position not valid", dest);
@@ -104,7 +104,7 @@ public class Board extends Observable
 		Point pos = agent.getPosition();
 
 		if (!isValidPos(pos))
-			throw new PositionException("Unit's position is off the map: "+size, pos);
+			throw new PositionException("Unit's position is off the map", pos);
 
 		if (map.putIfAbsent(pos, agent) != null)
 			throw new OccupiedPositionException(map.get(pos),pos);
@@ -120,9 +120,9 @@ public class Board extends Observable
 
 		try
 		{
-			isValidMove(src, dest);
+			validateMove(src, dest);
 			
-			// only move an agent if it exists at src
+			// only move an agent if it exists at src position
 			if (map.remove(src, agent))
 			{
 				map.put(dest, agent);
@@ -131,7 +131,7 @@ public class Board extends Observable
 		}
 		catch (OccupiedPositionException e)
 		{
-			// lets see if a wolf is killing a sheep
+			// check if a wolf is killing a sheep
 			if (agent.isWolf() && map.get(dest).isSheep())
 			{
 				map.remove(dest).kill();
@@ -143,21 +143,6 @@ public class Board extends Observable
 			else
 				throw e;
 		}
-		
-		signal();
-	}
-	
-	public synchronized void removeAgent(Agent agent) throws PositionException
-	{
-		Point pos = agent.getPosition();
-		
-		if (!isValidPos(pos))
-			throw new PositionException("Invalid position to remove", pos);
-		
-		if (map.get(pos) == null)
-			throw new PositionException("No agent at this position", pos);
-		
-		map.remove(agent.getPosition()).kill();
 		
 		signal();
 	}

@@ -31,6 +31,7 @@ public class Game
 		board.addObserver(gui);
 		
 		barrier = new CyclicBarrier(NUM_OF_SHEEP + NUM_OF_WOLVES, new EndGameCheck());
+		
 		generateWolves();
 		generateSheep();
 		
@@ -99,7 +100,7 @@ public class Game
 			
 			if (sheep > 0)
 			{
-				System.out.println("Agents left => Sheep: "+sheep+" | Wolves: "+wolves);
+				System.out.println("Agents left | Sheep: "+sheep+" | Wolves: "+wolves);
 				iterations++;
 			}
 			else

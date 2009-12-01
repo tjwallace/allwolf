@@ -1,6 +1,5 @@
 package allwolf.math;
 
-import java.util.Collection;
 
 public final class Point implements Comparable<Point>
 {
@@ -96,21 +95,5 @@ public final class Point implements Comparable<Point>
 	public String toString()
 	{
 		return "(" + x + "," + y + ")";
-	}
-	
-	public static Point getAverage(Collection<Point> points)
-	{
-		if (points.size() == 0)
-			return null;
-		
-		int x = 0, y = 0;
-		
-		for (Point p : points)
-		{
-			x += p.x;
-			y += p.y;
-		}
-		
-		return new Point(x / points.size(), y / points.size());
 	}
 }

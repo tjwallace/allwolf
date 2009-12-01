@@ -65,7 +65,7 @@ abstract public class Agent extends Thread
 		return new Area(tl, br);
 	}
 	
-	protected List<Agent> getAgentsInSight()
+	public List<Agent> getAgentsInSight()
 	{
 		return board.getAgents(getVision());
 	}
