@@ -1,13 +1,37 @@
 \documentclass{beamer}
-\usetheme{Copenhagen} 
-% \usetheme[height=7mm]{Rochester} 
+\usetheme[height=10mm]{Rochester} 
 % \usetheme{Boadilla} 
 % \usetheme{default}
 % \usepackage{beamerthemesplit}
 
-\title{My Allwolf Implementation}
+\usepackage[english]{babel}
+\usepackage{alltt}  % so you can include program text 
+\usepackage{listings}
+\usepackage[utf8]{inputenc}
+\usepackage[small]{caption}
+% \usepackage{color}
+
+\lstset{
+basicstyle=\tiny\ttfamily, % code font size 
+numbers=none, % where to put the line-numbers 
+stepnumber=1, % the step between two line-numbers. 
+frame=single, 
+frameround=tttt,
+captionpos=b, % t or b 
+showstringspaces=false, % underline spaces within strings 
+showspaces=false, % show spaces within strings with underscores 
+showtabs=false, % show tabs within strings with underscores 
+breaklines=true, % Break long lines of code 
+tabsize=2, % sets default tabsize to 4 spaces
+escapeinside={(*@}{@*)}, % To add labels in listing, needs own line
+keywordstyle=\color{blue}, %colors
+commentstyle=\color{green},
+stringstyle=\color{red}
+} 
+
+\title{Allwolf Implementation}
 \author{T. Jeff Wallace}
-\institute{McGill}
+\institute{McGill University}
 \date{\today}
 
 \begin{document}
@@ -15,41 +39,67 @@
 \frame{\titlepage}
 
 \section[Outline]{}
-\frame{\tableofcontents}
+\begin{frame}
+	\frametitle{Outline}
+	\tableofcontents
+\end{frame}
 
 \section{Concurrency}
 
 \subsection{ConcurrentHashMap}
 \begin{frame}
-  \frametitle{Shared Memory with {\tt ConcurrentHashMap}}
-
-  \begin{itemize}
-  \item Normal LaTeX class.
-  \item Easy overlays.
-  \item No external programs needed.      
-  \end{itemize}
+	\frametitle{Shared Memory with {\tt ConcurrentHashMap}}
+	\begin{definition}
+	A hash table supporting full concurrency of retrievals and adjustable expected concurrency for updates.
+	\end{definition}
+	
+	\begin{description}
+		\item[How does it work?] \hfill \\
+		The table is internally partitioned to try to permit the indicated number of concurrent updates without contention.
+		\item[Why use it?] \hfill \\
+		More concurrency.
+	\end{description}
 \end{frame}
 
 \subsection{CyclicBarrier}
-\begin{frame}
-  \frametitle{CyclicBarrier}
+\begin{frame}[fragile]
+	\frametitle{{\tt CyclicBarrier}}
+	\begin{definition}
+	A synchronization aid that allows a set of threads to all wait for each other to reach a common barrier point.
+	\end{definition}
 
-  \begin{itemize}
-  \item Normal LaTeX class.
-  \item Easy overlays.
-  \item No external programs needed.      
-  \end{itemize}
+	\begin{lstlisting}[language=Java,caption={Initializing the {\tt CyclicBarrier} in {\tt Game.java}}]
+	barrier = new CyclicBarrier(NUM_OF_SHEEP + NUM_OF_WOLVES, new EndGameCheck());
+	\end{lstlisting}
+	
+	\begin{lstlisting}[language=Java,caption={Using the {\tt CyclicBarrier} in {\tt Agent.java}}]
+	public void run()
+	{
+	    while(alive)
+	    {
+	        board.moveAgent(this, nextPos());
+	        barrier.await();
+	    }
+	}
+	\end{lstlisting}
+	
+	\begin{itemize}
+		\item Makes sure agents move the {\em same} number of times per cycle.
+		\item Can check for {\em end game} condition after each cycle using inner class {\tt EndGameCheck}
+	\end{itemize}
 \end{frame}
 
 \section{Extensions}
-\begin{frame}
-  \frametitle{Features of the Beamer Class}
 
-  \begin{itemize}
-  \item Normal LaTeX class.
-  \item Easy overlays.
-  \item No external programs needed.      
-  \end{itemize}
+\subsection{Agent Speed}
+\begin{frame}
+	\frametitle{Variable Agent Speed}	
+	\begin{description}
+		\item[Description] \hfill \\
+		Allow each agent type to move an arbitrary number times in {\em north}, {\em south}, {\em east}, or {\em west} direction per cycle.
+		\item[Concurrency problems] \hfill \\
+		Agent computes next position but another agent has already moved there.
+	\end{description}
 \end{frame}
 
 \end{document}

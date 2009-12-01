@@ -50,8 +50,6 @@ public final class Wolf extends Agent
 				break;
 		}
 		
-		
-		
 		return dest;
 	}
 
