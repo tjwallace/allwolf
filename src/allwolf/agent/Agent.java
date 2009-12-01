@@ -80,7 +80,7 @@ abstract public class Agent extends Thread
 		return this instanceof Sheep;
 	}
 	
-	protected Point randomMove()
+	protected Point randomNextPosition() throws MoveException
 	{
 		// pick random directions
 		Point goal;
@@ -92,16 +92,27 @@ abstract public class Agent extends Thread
 			yDir = Integer.signum(goal.y - position.y);
 		}
 		
-		return calculateMove(xDir, yDir);
+		return calculateNextPosition(xDir, yDir);
 	}
 	
-	protected Point calculateMove(int xDir, int yDir)
+	protected Point calculateNextPosition(Point goal) throws MoveException
 	{
-		return calculateMove(xDir, yDir, null);
+		int xDir = Integer.signum(goal.x - position.x);
+		int yDir = Integer.signum(goal.y - position.y);
+		
+		return calculateNextPosition(xDir, yDir, goal);
 	}
 	
-	protected Point calculateMove(int xDir, int yDir, Point goal)
+	protected Point calculateNextPosition(int xDir, int yDir) throws MoveException
 	{
+		return calculateNextPosition(xDir, yDir, null);
+	}
+	
+	private Point calculateNextPosition(int xDir, int yDir, Point goal) throws MoveException
+	{
+		if (xDir == 0 && yDir == 0)
+			throw new MoveException();
+		
 		Stack<Point> moves = new Stack<Point>();
 		moves.push(new Point(position));
 		
@@ -109,25 +120,29 @@ abstract public class Agent extends Thread
 		Point next = null;
 		while (range > 0)
 		{
-			if (Math.random() > 0.5)
+			if (Math.random() > 0.5 && xDir != 0)
 			{
 				// move x
 				next = new Point(moves.peek());
-				if (xDir != 0)
+				if (board.isValidPos(next.translateX(xDir)))
 				{
-					moves.push(next.translateX(xDir));
+					moves.push(next);
 					range--;
 				}
+				else 
+					xDir = (Math.random() > 0.5) ? 1 : -1;
 			}
-			else
+			else if (yDir != 0)
 			{
 				// move y
 				next = new Point(moves.peek());
-				if (range > 0 && yDir != 0)
+				if (board.isValidPos(next.translateY(yDir)))
 				{
-					moves.push(next.translateY(yDir));
+					moves.push(next);
 					range--;
 				}
+				else
+					yDir = (Math.random() > 0.5) ? 1 : -1;
 			}
 			
 			if (checkGoal(moves.peek(), goal))
@@ -157,7 +172,7 @@ abstract public class Agent extends Thread
 		{
 			try
 			{
-				Point next = nextPos();
+				Point next = nextPosition();
 				barrier.await();
 				
 				if (!kill)
@@ -174,7 +189,7 @@ abstract public class Agent extends Thread
 		return !kill;
 	}
 
-	protected abstract Point nextPos();
+	protected abstract Point nextPosition() throws MoveException;
 
 	@Override
 	public void run()

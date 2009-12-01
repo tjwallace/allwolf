@@ -87,8 +87,8 @@ public final class Point implements Comparable<Point>
 	public int hashCode()
 	{
 		int hash = 1;
-		hash = hash * 31 + x;
 		hash = hash * 31 + y;
+		hash = hash * 31 + x;
 		return hash;
 	}
 	

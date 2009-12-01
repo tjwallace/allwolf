@@ -83,11 +83,14 @@ public class Board extends Observable
 		
 		if (map.get(src) == null)
 			throw new EmptyPositionException(src);
+		
+		if (src.equals(dest))
+			throw new PositionException("Cannot move to same position", src);
 
-		if (!src.equals(dest) && !isValidPos(dest))
+		if (!isValidPos(dest))
 			throw new PositionException("Destination position not valid", dest);
 		
-		if (!src.equals(dest) && map.get(dest) != null)
+		if (map.get(dest) != null)
 			throw new OccupiedPositionException(map.get(dest), dest);
 	}
 	

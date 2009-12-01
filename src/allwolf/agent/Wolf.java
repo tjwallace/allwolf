@@ -16,7 +16,7 @@ public final class Wolf extends Agent
 	}
 
 	@Override
-	protected Point nextPos()
+	protected Point nextPosition() throws MoveException
 	{
 		// find closest sheep
 		List<Agent> sheep = filterSheep(getAgentsInSight());
@@ -24,15 +24,10 @@ public final class Wolf extends Agent
 		if (sheep.size() > 0)
 		{
 			// move towards closest sheep
-			Point goal = getClosestAgent(sheep).position;
-			int xDir = Integer.signum(goal.x - position.x);
-			int yDir = Integer.signum(goal.y - position.y);
-
-			return calculateMove(xDir, yDir, goal);
+			return calculateNextPosition(getClosestAgent(sheep).position);
 		}
 		else
-			return randomMove();
-		
+			return randomNextPosition();
 	}
 	
 	private Agent getClosestAgent(List<Agent> agents)

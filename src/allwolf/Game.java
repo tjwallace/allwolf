@@ -20,6 +20,8 @@ public class Game
 	private Board board;
 	private CyclicBarrier barrier;
 	private BoardGUI gui;
+	
+	private int iterations;
 
 	public Game()
 	{
@@ -31,6 +33,8 @@ public class Game
 		barrier = new CyclicBarrier(NUM_OF_SHEEP + NUM_OF_WOLVES, new EndGameCheck());
 		generateWolves();
 		generateSheep();
+		
+		iterations = 0;
 	}
 	
 	private void generateWolves()
@@ -96,10 +100,13 @@ public class Game
 			if (sheep > 0)
 			{
 				System.out.println("Agents left => Sheep: "+sheep+" | Wolves: "+wolves);
+				iterations++;
 			}
 			else
 			{
-				System.out.println("No more sheep left!  GAME OVER");
+				System.out.println("No more sheep left!");
+				System.out.println("Game complete in "+iterations+" iterations");
+				
 				for (Agent a : board.getAgents())
 					a.kill();
 				
