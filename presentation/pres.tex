@@ -84,8 +84,8 @@ stringstyle=\color{red}
 	\end{lstlisting}
 	
 	\begin{itemize}
-		\item Makes sure agents move the {\em same} number of times per cycle.
-		\item Can check for {\em end game} condition after each cycle using inner class {\tt EndGameCheck}
+		\item Assert that an agent moves only {\em once} per cycle.
+		\item Check for {\em end game} condition after each cycle using the inner class {\tt EndGameCheck}
 	\end{itemize}
 \end{frame}
 
@@ -96,7 +96,7 @@ stringstyle=\color{red}
 	\frametitle{Variable Agent Speed}	
 	\begin{description}
 		\item[Description] \hfill \\
-		Allow each agent type to move an arbitrary number times in {\em north}, {\em south}, {\em east}, or {\em west} direction per cycle.
+		Allow each agent type to move an arbitrary distance in {\em north}, {\em south}, {\em east}, or {\em west} direction(s) per cycle.
 		\item[Concurrency problems] \hfill \\
 		Agent computes next position but another agent has already moved there.
 	\end{description}
