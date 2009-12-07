@@ -1,0 +1,81 @@
+\documentclass[10pt]{article}
+
+\setlength{\parskip}{1mm}
+\setlength{\topmargin}{0in}
+\setlength{\oddsidemargin}{0in}
+\setlength{\evensidemargin}{0in}
+\setlength{\textheight}{8.9in}
+\setlength{\textwidth}{6.5in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+\setlength{\marginparwidth}{0.5in}
+
+%\usepackage{amsmath}
+\usepackage{listings}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+%\usepackage{hyperref}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{fixltx2e}
+
+% \numberwithin{equation}{section}
+
+\lstset{
+basicstyle=\ttfamily, % code font size 
+numbers=none, % where to put the line-numbers 
+frame=single, 
+frameround=tttt,
+captionpos=b, % t or b 
+showstringspaces=false, % underline spaces within strings 
+showspaces=false, % show spaces within strings with underscores 
+showtabs=false, % show tabs within strings with underscores 
+breaklines=true, % Break long lines of code 
+tabsize=4, % sets default tabsize to 4 spaces
+escapeinside={(*@}{@*)}, % To add labels in listing, needs own line
+keywordstyle=\color{blue}, %colors
+commentstyle=\color{NavyBlue},
+stringstyle=\color{red}
+} 
+ 
+\begin{document}
+
+\title{ECSE 420 - Parallel Computing \\ Final Project}
+\author{T. Jeff Wallace \\ 260183291 \\ jeff@tjwallace.ca}
+\date{\today}
+\maketitle
+\clearpage
+
+\tableofcontents
+\lstlistoflistings
+%\listoffigures
+%\listoftables
+\clearpage
+
+% Overview
+% descriptions of what you are trying to solve
+% the outline of your approach
+% highlight the neatest features of your approach.
+
+\section{Introduction}\label{intro}
+\begin{itemize}
+	\item A (very) brief overview of allwolf -- what you are trying to solve
+	\item unclear specifications
+\end{itemize}
+
+\section{Implementation}\label{impl}
+\subsection{Language Choice}\label{language}
+Reasons for choosing Java.  Standard library...
+
+\subsection{Shared Memory}\label{sharedMemory}
+Using {\tt ConcurrentHashMap}.  Problems found and their solutions.
+
+\subsection{Thread Synchronization}\label{threadSync}
+Using {\tt CyclicBarrier} for controller thread execution (fairness).
+
+\section{Conclusion}\label{conclusion}
+Realizations from programming with shared-memory, multiple threads.
+
+
+\end{document}
