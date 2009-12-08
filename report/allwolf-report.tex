@@ -14,7 +14,7 @@
 \usepackage{listings}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
-%\usepackage{hyperref}
+\usepackage{hyperref}
 \usepackage[usenames,dvipsnames]{color}
 \usepackage{graphicx}
 \usepackage{float}
@@ -62,6 +62,7 @@ stringstyle=\color{red}
 \begin{itemize}
 	\item A (very) brief overview of allwolf -- what you are trying to solve
 	\item unclear specifications
+	\item Game changes -- agent speed
 \end{itemize}
 
 \section{Implementation}\label{impl}
@@ -74,13 +75,22 @@ Using {\tt ConcurrentHashMap}.  Problems found and their solutions.
 \subsection{Thread Synchronization}\label{threadSync}
 Using {\tt CyclicBarrier} for controller thread execution (fairness).
 
+\subsection{Move Selection}\label{moveSel}
+Basic algorithm for selecting where to move to next.  Go over basic algorithm, using {\em goal} point and calculating directions.
+
+\subsubsection{Wolf}\label{wolfMove}
+How does a wolf pick its next move.
+
+\subsubsection{Sheep}\label{sheepMove}
+How does a sheep pick its next move.
+
 \section{Conclusion}\label{conclusion}
 Realizations from programming with shared-memory, multiple threads.
 
 \appendix
 \section{Source Code}
-The source code can be found at {\tt http://github.com/tjwallace/allwolf}.
-If you are in a UNIX like environment, you can check out the code by running: {\tt git clone git://github.com/tjwallace/allwolf.git}.
+The source code can be found at \url{http://github.com/tjwallace/allwolf}.
+If you are using a UNIX like environment, you can check out the source code by running: {\tt git clone git://github.com/tjwallace/allwolf.git}.
 
 \section{Compiling and Running}
 Load project into Eclipse and run {\tt Main.java}. 
