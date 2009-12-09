@@ -8,7 +8,7 @@ import allwolf.math.Point;
 public final class Wolf extends Agent
 {
 	public static final int SIGHT = 4;
-	public static final int SPEED = 1;
+	public static final int SPEED = 2;
 
 	public Wolf(CyclicBarrier barrier, Point position)
 	{

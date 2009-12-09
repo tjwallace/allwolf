@@ -38,19 +38,6 @@ public class Board extends Observable
 		return map.values();
 	}
 	
-	public List<Agent> getAgents(Class<?> clazz)
-	{
-		List<Agent> agents = new ArrayList<Agent>();
-		
-		for (Agent a : map.values())
-		{
-			if (a.getClass().equals(clazz))
-				agents.add(a);
-		}
-		
-		return agents;
-	}
-	
 	public List<Agent> getAgents(Area area)
 	{
 		List<Agent> agents = new ArrayList<Agent>();

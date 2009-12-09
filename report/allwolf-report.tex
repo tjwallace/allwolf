@@ -10,47 +10,16 @@
 \setlength{\headsep}{0in}
 \setlength{\marginparwidth}{0.5in}
 
-%\usepackage{amsmath}
-\usepackage{listings}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
-\usepackage{hyperref}
-\usepackage[usenames,dvipsnames]{color}
-\usepackage{graphicx}
-\usepackage{float}
-\usepackage{fixltx2e}
-
-% \numberwithin{equation}{section}
-
-\lstset{
-basicstyle=\ttfamily, % code font size 
-numbers=none, % where to put the line-numbers 
-frame=single, 
-frameround=tttt,
-captionpos=b, % t or b 
-showstringspaces=false, % underline spaces within strings 
-showspaces=false, % show spaces within strings with underscores 
-showtabs=false, % show tabs within strings with underscores 
-breaklines=true, % Break long lines of code 
-tabsize=4, % sets default tabsize to 4 spaces
-escapeinside={(*@}{@*)}, % To add labels in listing, needs own line
-keywordstyle=\color{blue}, %colors
-commentstyle=\color{NavyBlue},
-stringstyle=\color{red}
-} 
+\usepackage[pdftex,pdfborder={0 0 0 0}]{hyperref}
  
 \begin{document}
 
-\title{ECSE 420 - Parallel Computing \\ Final Project - Allwolf}
+\title{{\sc ECSE 420 - Parallel Computing} \\ Final Project - Group 10 - Allwolf}
 \author{T. Jeff Wallace \\ 260183291 \\ jeff@tjwallace.ca}
 \date{\today}
 \maketitle
-\clearpage
-
-\tableofcontents
-\lstlistoflistings
-%\listoffigures
-%\listoftables
 \clearpage
 
 % Overview
@@ -59,33 +28,39 @@ stringstyle=\color{red}
 % highlight the neatest features of your approach.
 
 \section{Introduction}\label{intro}
-\begin{itemize}
-	\item A (very) brief overview of allwolf -- what you are trying to solve
-	\item unclear specifications
-	\item Game changes -- agent speed
-\end{itemize}
+Allwolf is a simulation of wolves and sheep on a finite map.  Each animal (agent) has a defined sight range and movement speed, and based on what they can see in their vision, will move accordingly.  Sheep will run away from wolves, while wolves will run towards sheep.  When a wolf is able to move onto the same location as a sheep, the sheep is turned into a wolf, and then the simulation is continued until there are no more sheep left on the map.
+
+Allowing sheep and wolves to move at arbitrary speeds, as opposed to only {\em one} point, was actually not specified in the original design.  I added this to better simulate real life, and to make the simulations complete faster.
+
+From the specifications, the three man design goals will be implementing a {\em shared memory} system to act as the map, a {\em barrier} to make sure each agent only moves once per cycle, and an algorithm for calculating an agents next move.
 
 \section{Implementation}\label{impl}
 \subsection{Language Choice}\label{language}
-Reasons for choosing Java.  Standard library...
+For my implementation I used the Java language, as it comes with a {\em massive} standard library, so I would not have to reinvent the wheel for shared memory and barrier classes.
 
 \subsection{Shared Memory}\label{sharedMemory}
-Using {\tt ConcurrentHashMap}.  Problems found and their solutions.
+For the map, I chose to use a {\tt ConcurrentMap<Point,Agent>}\footnote{\url{http://java.sun.com/javase/6/docs/api/java/util/concurrent/ConcurrentMap.html}} instead of a two dimensional array.  Using a {\tt Map} would give me synchronization, and make moving agents simpler.
+
+To implement the simulation map (shared memory), I used the {\tt ConcurrentHashMap} class\footnote{\url{http://java.sun.com/javase/6/docs/api/java/util/concurrent/ConcurrentHashMap.html}}.  It acts like a standard synchronized {\tt HashTable} in that all operations are synchronized, but it increases concurrency by partitioning the internal table, and only locking the required partition during updates.  It also adds some new methods on top of the {\tt Map<K,V>} interface, one being the {\tt remove(Object key, Object value)} method.  This only removes the {\tt key} from the map if it is currently mapped to {\tt value}.  This is used in the {\tt Board} class to make sure we don't move a sheep that has been replaced by a wolf.
 
 \subsection{Thread Synchronization}\label{threadSync}
-Using {\tt CyclicBarrier} for controller thread execution (fairness).
+To ensure that each agent is only allowed to move {\em once} per cycle, I used the {\tt CyclicBarrier} class\footnote{\url{http://java.sun.com/javase/6/docs/api/java/util/concurrent/CyclicBarrier.html}}.  The {\tt CyclicBarrier} is a synchronization aid that allows a set of threads to all wait for each other to reach a common barrier point.  Each agent thread calculates its next move (see section \ref{moveSel}), and then waits for all the other agents to do the same.  Once they are all ready, they line up to use the method {\tt synchronized void moveAgent(Agent agent, Point dest)} in the {\tt Board} class.  If a conflict is detected, a {\tt MoveException} is thrown, and the {\tt Agent} calculates its next move again.
+
+The {\tt CyclicBarrier} class also allows an object that implements {\tt Runnable} to be run after each cycle.  I use this feature to run {\tt EndGameCheck} to count the number of sheep and wolves left, and end the simulation if necessary.  It can also slow down the simulation to make viewing easier ({\tt Thread.sleep(long timeout)}).
 
 \subsection{Move Selection}\label{moveSel}
-Basic algorithm for selecting where to move to next.  Go over basic algorithm, using {\em goal} point and calculating directions.
+All {\tt Agent} moves are calculated by giving the {\tt x} and {\tt y} directions in which the agent wants to move, and optionally a goal {\tt Point} that the {\tt Agent} is trying to reach.
+
+Once the directions and optional goal have been calculated, the algorithm systematically pushes onto a stack destination points further and further in the given directions until the agent is not allowed to move any further in a turn or the goal has been reached.
 
 \subsubsection{Wolf}\label{wolfMove}
-How does a wolf pick its next move.
+A wolf calculates its next move by creating a list of visible sheep, picking the closest one, and then using that sheep's position as a goal for the move algorithm.  If it cannot see any sheep, it moves in a random direction.
 
 \subsubsection{Sheep}\label{sheepMove}
-How does a sheep pick its next move.
+A sheep calculates its next move by creating a list of visible wolves, finding the average location of those wolves, and moving {\em away} from that point.  Similar to a wolf, if a sheep cannot see any wolves, it moves in a random direction.
 
 \section{Conclusion}\label{conclusion}
-Realizations from programming with shared-memory, multiple threads.
+The hardest problem in this project was making sure the simulation board did not become corrupted due to multiple threads updating at the same time.  The board was kept stable by using the {\tt ConcurrentHashMap} class, which provides thread-safe operations to use for moving {\tt Agents}s.  Keeping all the {\tt Agent}s in sync would have been difficult as well, but fortunately the {\tt CyclicBarrier} class provides that functionality.
 
 \appendix
 \section{Source Code}
@@ -93,6 +68,6 @@ The source code can be found at \url{http://github.com/tjwallace/allwolf}.
 If you are using a UNIX like environment, you can check out the source code by running: {\tt git clone git://github.com/tjwallace/allwolf.git}.
 
 \section{Compiling and Running}
-Load project into Eclipse and run {\tt Main.java}. 
+Load project into Eclipse and run {\tt Main.java}.  The map is printed to the console after each cycle.
 
 \end{document}

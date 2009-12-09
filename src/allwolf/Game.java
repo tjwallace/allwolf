@@ -13,7 +13,7 @@ import allwolf.math.Area;
 
 public class Game
 {
-	public static final int SIZE = 20;
+	public static final int SIZE = 50;
 	public static final int NUM_OF_SHEEP = 7;
 	public static final int NUM_OF_WOLVES = 1;
 	
@@ -26,10 +26,7 @@ public class Game
 	public Game()
 	{
 		gui = new TextGUI();
-		
 		board = new Board(new Area(SIZE, SIZE), this);
-		board.addObserver(gui);
-		
 		barrier = new CyclicBarrier(NUM_OF_SHEEP + NUM_OF_WOLVES, new EndGameCheck());
 		
 		generateWolves();
@@ -89,24 +86,33 @@ public class Game
 		public void run()
 		{			
 			int sheep = 0, wolves = 0;
-			
 			for (Agent a : board.getAgents())
 			{
-				if (a instanceof Sheep)
+				if (a.isSheep())
 					sheep++;
 				else
 					wolves++;
 			}
 			
+			System.out.println("Agents left | Sheep: "+sheep+" | Wolves: "+wolves);
+			gui.update(board, null);
+			
 			if (sheep > 0)
 			{
-				System.out.println("Agents left | Sheep: "+sheep+" | Wolves: "+wolves);
 				iterations++;
+				
+				try
+				{
+					Thread.sleep(250);
+				}
+				catch (InterruptedException e)
+				{
+					System.err.println("InterruptedException in EndGameCheck");
+				}
 			}
 			else
 			{
-				System.out.println("No more sheep left!");
-				System.out.println("Game complete in "+iterations+" iterations");
+				System.out.println("Game completed in "+iterations+" iterations");
 				
 				for (Agent a : board.getAgents())
 					a.kill();

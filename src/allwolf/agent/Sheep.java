@@ -22,8 +22,8 @@ public final class Sheep extends Agent
 		if (points.size() != 0)
 		{
 			// get average location of the visible wolves		
-			// move away from it			
-			Point dir = calcDirection(points);
+			// and move away from it			
+			Point dir = calcAwayDirection(points);
 			
 			// make sure we have options
 			if (dir.x != 0 && dir.y != 0)
@@ -39,7 +39,7 @@ public final class Sheep extends Agent
 		return "Sheep @ "+position;
 	}
 	
-	private Point calcDirection(List<Point> points)
+	private Point calcAwayDirection(List<Point> points)
 	{
 		double x = 0, y = 0;
 		

@@ -53,7 +53,7 @@ abstract public class Agent extends Thread
 		return speed;
 	}
 	
-	public void kill()
+	public final void kill()
 	{
 		kill = true;
 	}
@@ -120,9 +120,8 @@ abstract public class Agent extends Thread
 		Point next = null;
 		while (range > 0)
 		{
-			if (Math.random() > 0.5 && xDir != 0)
+			if (Math.random() > 0.5 && xDir != 0) // move x
 			{
-				// move x
 				next = new Point(moves.peek());
 				if (board.isValidPos(next.translateX(xDir)))
 				{
@@ -132,9 +131,8 @@ abstract public class Agent extends Thread
 				else 
 					xDir = (Math.random() > 0.5) ? 1 : -1;
 			}
-			else if (yDir != 0)
+			else if (yDir != 0) // move y
 			{
-				// move y
 				next = new Point(moves.peek());
 				if (board.isValidPos(next.translateY(yDir)))
 				{
@@ -145,19 +143,19 @@ abstract public class Agent extends Thread
 					yDir = (Math.random() > 0.5) ? 1 : -1;
 			}
 			
-			if (checkGoal(moves.peek(), goal))
-				break;
-		}
-		
-		while (!board.isValidPos(moves.peek()))
-			moves.pop();
+			if (goal != null)
+			{
+				if (moves.peek().equals(goal))
+					break;
+				
+				if (moves.peek().x == goal.x)
+					xDir = 0;
+				else if (moves.peek().y == goal.y)
+					yDir = 0;
+			}
+		}			
 		
 		return moves.peek();
-	}
-	
-	private boolean checkGoal(Point check, Point goal)
-	{
-		return goal != null && check.equals(goal);
 	}
 
 	/**
@@ -196,10 +194,13 @@ abstract public class Agent extends Thread
 	{
 		boolean run = true;
 		while (run)
+		{
 			run = step();
+		}
+			
 	}
 	
-	protected static List<Agent> filterWolves(List<Agent> agents)
+	public static List<Agent> filterWolves(List<Agent> agents)
 	{
 		List<Agent> wolves = new ArrayList<Agent>();
 		for(Agent a : agents)
@@ -211,7 +212,7 @@ abstract public class Agent extends Thread
 		return wolves;
 	}
 	
-	protected static List<Agent> filterSheep(List<Agent> agents)
+	public static List<Agent> filterSheep(List<Agent> agents)
 	{
 		List<Agent> sheep = new ArrayList<Agent>();
 		for(Agent a : agents)
