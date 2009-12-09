@@ -32,7 +32,7 @@ Allwolf is a simulation of wolves and sheep on a finite map.  Each animal (agent
 
 Allowing sheep and wolves to move at arbitrary speeds, as opposed to only {\em one} point, was actually not specified in the original design.  I added this to better simulate real life, and to make the simulations complete faster.
 
-From the specifications, the three man design goals will be implementing a {\em shared memory} system to act as the map, a {\em barrier} to make sure each agent only moves once per cycle, and an algorithm for calculating an agents next move.
+From the specifications, the three main design goals will be implementing a {\em shared memory} system to act as the map, a {\em barrier} to make sure each agent only moves once per cycle, and an algorithm for calculating an agents next move.
 
 \section{Implementation}\label{impl}
 \subsection{Language Choice}\label{language}
@@ -51,7 +51,7 @@ The {\tt CyclicBarrier} class also allows an object that implements {\tt Runnabl
 \subsection{Move Selection}\label{moveSel}
 All {\tt Agent} moves are calculated by giving the {\tt x} and {\tt y} directions in which the agent wants to move, and optionally a goal {\tt Point} that the {\tt Agent} is trying to reach.
 
-Once the directions and optional goal have been calculated, the algorithm systematically pushes onto a stack destination points further and further in the given directions until the agent is not allowed to move any further in a turn or the goal has been reached.
+Once the directions and optional goal have been calculated, the algorithm systematically pushes onto a stack destination {\tt Point}s which are further and further away from the starting position in the given {\tt x} and {\tt y} directions.  It stops and returns the final destination point when the agent is not allowed to move any further in a turn or the goal has been reached.
 
 \subsubsection{Wolf}\label{wolfMove}
 A wolf calculates its next move by creating a list of visible sheep, picking the closest one, and then using that sheep's position as a goal for the move algorithm.  If it cannot see any sheep, it moves in a random direction.
